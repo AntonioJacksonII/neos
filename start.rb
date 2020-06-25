@@ -6,10 +6,10 @@ puts "Please enter a date in the following format YYYY-MM-DD."
 print ">>"
 
 date = gets.chomp
-asteroid_details = NearEarthObjects.find_neos_by_date(date)
-asteroid_list = NearEarthObjects.asteroid_list
-total_number_of_asteroids = NearEarthObjects.total_number_of_asteroids
-largest_asteroid = NearEarthObjects.biggest_asteroid
+
+asteroid_list = NearEarthObjects.asteroid_list(date)
+total_number_of_asteroids = NearEarthObjects.total_number_of_asteroids(date)
+largest_asteroid = NearEarthObjects.biggest_asteroid(date)
 
 column_labels = { name: "Name", diameter: "Diameter", miss_distance: "Missed The Earth By:" }
 column_data = column_labels.each_with_object({}) do |(col, label), hash|
@@ -27,7 +27,7 @@ def format_row_data(row_data, column_info)
 end
 
 def create_rows(asteroid_data, column_info)
-  rows = asteroid_data.each { |asteroid| format_row_data(asteroid, column_info) }
+  asteroid_data.each { |asteroid| format_row_data(asteroid, column_info) }
 end
 
 formated_date = DateTime.parse(date).strftime("%A %b %d, %Y")

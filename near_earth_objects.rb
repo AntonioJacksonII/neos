@@ -7,18 +7,19 @@ Figaro.application = Figaro::Application.new(environment: 'production', path: Fi
 Figaro.load
 
 class NearEarthObjects
-  def self.find_neos_by_date(date)
+
+  def self.parse_asteroids_data(date)
     conn = Faraday.new(
       url: 'https://api.nasa.gov',
       params: { start_date: date, api_key: ENV['nasa_api_key']}
     )
     asteroids_list_data = conn.get('/neo/rest/v1/feed')
 
-    @parsed_asteroids_data = JSON.parse(asteroids_list_data.body, symbolize_names: true)[:near_earth_objects][:"#{date}"]
+    JSON.parse(asteroids_list_data.body, symbolize_names: true)[:near_earth_objects][:"#{date}"]
   end
 
-  def self.asteroid_list
-    @parsed_asteroids_data.map do |asteroid|
+  def self.asteroid_list(date)
+    parse_asteroids_data(date).map do |asteroid|
       {
         name: asteroid[:name],
         diameter: "#{asteroid[:estimated_diameter][:feet][:estimated_diameter_max].to_i} ft",
@@ -27,13 +28,13 @@ class NearEarthObjects
     end
   end
 
-  def self.biggest_asteroid
-    @parsed_asteroids_data.map do |astroid|
+  def self.biggest_asteroid(date)
+    parse_asteroids_data(date).map do |astroid|
       astroid[:estimated_diameter][:feet][:estimated_diameter_max].to_i
     end.max { |a,b| a <=> b}
   end
 
-  def self.total_number_of_asteroids
-    @parsed_asteroids_data.count
+  def self.total_number_of_asteroids(date)
+    parse_asteroids_data(date).count
   end
 end
