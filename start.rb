@@ -7,7 +7,7 @@ print ">>"
 
 date = gets.chomp
 astroid_details = NearEarthObjects.find_neos_by_date(date)
-astroid_list = astroid_details[:astroid_list]
+astroid_list = NearEarthObjects.asteroid_list
 total_number_of_astroids = astroid_details[:total_number_of_astroids]
 largest_astroid = astroid_details[:biggest_astroid]
 
