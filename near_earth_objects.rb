@@ -15,12 +15,6 @@ class NearEarthObjects
     asteroids_list_data = conn.get('/neo/rest/v1/feed')
 
     @parsed_asteroids_data = JSON.parse(asteroids_list_data.body, symbolize_names: true)[:near_earth_objects][:"#{date}"]
-
-    total_number_of_astroids = @parsed_asteroids_data.count
-
-    {
-      total_number_of_astroids: total_number_of_astroids
-    }
   end
 
   def self.asteroid_list
@@ -37,5 +31,9 @@ class NearEarthObjects
     @parsed_asteroids_data.map do |astroid|
       astroid[:estimated_diameter][:feet][:estimated_diameter_max].to_i
     end.max { |a,b| a <=> b}
+  end
+
+  def self.total_number_of_asteroids
+    @parsed_asteroids_data.count
   end
 end

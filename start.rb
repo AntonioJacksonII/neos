@@ -8,7 +8,7 @@ print ">>"
 date = gets.chomp
 asteroid_details = NearEarthObjects.find_neos_by_date(date)
 asteroid_list = NearEarthObjects.asteroid_list
-total_number_of_asteroids = asteroid_details[:total_number_of_astroids]
+total_number_of_asteroids = NearEarthObjects.total_number_of_asteroids
 largest_asteroid = NearEarthObjects.biggest_asteroid
 
 column_labels = { name: "Name", diameter: "Diameter", miss_distance: "Missed The Earth By:" }
