@@ -7,27 +7,29 @@ print ">>"
 
 date = gets.chomp
 
-asteroid_list = NearEarthObjects.asteroid_list(date)
-total_number_of_asteroids = NearEarthObjects.total_number_of_asteroids(date)
-largest_asteroid = NearEarthObjects.biggest_asteroid(date)
+parsed = NearEarthObjects.parse_asteroids_data(date)
+asteroids = parsed.map { |asteroid| NearEarthObjects.new(asteroid)}
+total_number_of_asteroids = asteroids.count
+largest_asteroid = asteroids.map{ |asteroid| asteroid.diameter}.max
 
-column_labels = { name: "Name", diameter: "Diameter", miss_distance: "Missed The Earth By:" }
-column_data = column_labels.each_with_object({}) do |(col, label), hash|
-  hash[col] = {
-    label: label,
-    width: [asteroid_list.map { |asteroid| asteroid[col].size }.max, label.size].max}
-end
+@maximum_name_length = asteroids.map{ |asteroid| asteroid.name.length}.max
+@maximum_diameter_length = "Diameter".length
+@maximum_miss_distance_length = "Missed The Earth By:".length
 
-header = "| #{ column_data.map { |_,col| col[:label].ljust(col[:width]) }.join(' | ') } |"
-divider = "+-#{column_data.map { |_,col| "-"*col[:width] }.join('-+-') }-+"
+header = "| #{"Name".ljust(@maximum_name_length)} | Diameter | Missed The Earth By: |"
+divider = "+-#{"-"*(@maximum_name_length)}-+#{"-"*(@maximum_diameter_length + 2)}+#{"-"*(@maximum_miss_distance_length + 2)}+"
 
-def format_row_data(row_data, column_info)
-  row = row_data.keys.map { |key| row_data[key].ljust(column_info[key][:width]) }.join(' | ')
+def format_row_data(row_data)
+  row = []
+  row << row_data.name.ljust(@maximum_name_length)
+  row << row_data.diameter.to_s.concat(" ft").ljust(@maximum_diameter_length)
+  row << row_data.miss_distance.to_s.concat(" miles").ljust(@maximum_miss_distance_length)
+  row = row.join(' | ')
   puts "| #{row} |"
 end
 
-def create_rows(asteroid_data, column_info)
-  asteroid_data.each { |asteroid| format_row_data(asteroid, column_info) }
+def create_rows(asteroid_data)
+  asteroid_data.each { |asteroid| format_row_data(asteroid) }
 end
 
 formated_date = DateTime.parse(date).strftime("%A %b %d, %Y")
@@ -37,5 +39,5 @@ puts "The largest of these was #{largest_asteroid} ft. in diameter."
 puts "\nHere is a list of objects with details:"
 puts divider
 puts header
-create_rows(asteroid_list, column_data)
+create_rows(asteroids)
 puts divider
